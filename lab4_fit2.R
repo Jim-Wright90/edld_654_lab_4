@@ -17,6 +17,12 @@ knn_params <- parameters(neighbors(range = c(1, 20)),
 
 knn_sfd <- grid_max_entropy(knn_params, size = 25)
 
+knn_sfd %>%
+  ggplot(aes(neighbors, dist_power))+
+  geom_point(aes(color = weight_func))
+
+
+
 fit2 <- tune::tune_grid(
   knn2_mod, 
   rec, 
