@@ -20,7 +20,7 @@ full_train <- read_csv("data/train.csv")
 # create initial splits 
 set.seed(3000)
 
-data_split <- initial_split(data_sample)
+data_split <- initial_split(full_train)
 
 train_split <- training(data_split)
 test_split <- testing(data_split)
