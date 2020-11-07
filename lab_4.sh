@@ -9,3 +9,4 @@
 #SBATCH --cpus-per-task=8                 
 #SBATCH --mem-per-cpu=16GB       
 #SBATCH --account=edld654
+R CMD BATCH --no-save --no-restore lab4_fit1.R   

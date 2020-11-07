@@ -1,0 +1,247 @@
+---
+title: "fit1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-redhat-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> source("lab4_common.R")
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
+✔ ggplot2 3.3.2     ✔ purrr   0.3.4
+✔ tibble  3.0.4     ✔ dplyr   1.0.2
+✔ tidyr   1.1.2     ✔ stringr 1.4.0
+✔ readr   1.4.0     ✔ forcats 0.5.0
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+── Attaching packages ────────────────────────────────────── tidymodels 0.1.1 ──
+✔ broom     0.7.2      ✔ recipes   0.1.14
+✔ dials     0.0.9      ✔ rsample   0.0.8 
+✔ infer     0.5.3      ✔ tune      0.1.1 
+✔ modeldata 0.1.0      ✔ workflows 0.2.1 
+✔ parsnip   0.1.4      ✔ yardstick 0.0.7 
+── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+✖ scales::discard() masks purrr::discard()
+✖ dplyr::filter()   masks stats::filter()
+✖ recipes::fixed()  masks stringr::fixed()
+✖ dplyr::lag()      masks stats::lag()
+✖ yardstick::spec() masks readr::spec()
+✖ recipes::step()   masks stats::step()
+Loading required package: foreach
+
+Attaching package: ‘foreach’
+
+The following objects are masked from ‘package:purrr’:
+
+    accumulate, when
+
+Loading required package: iterators
+Loading required package: parallel
+
+── Column specification ────────────────────────────────────────────────────────
+cols(
+  .default = col_character(),
+  id = col_double(),
+  attnd_dist_inst_id = col_double(),
+  attnd_schl_inst_id = col_double(),
+  enrl_grd = col_double(),
+  calc_admn_cd = col_logical(),
+  partic_dist_inst_id = col_double(),
+  partic_schl_inst_id = col_double(),
+  score = col_double(),
+  classification = col_double(),
+  ncessch = col_double(),
+  lat = col_double(),
+  lon = col_double()
+)
+ℹ Use `spec()` for the full column specifications.
+
+> 
+> # set model
+> knn1_mod <- 
++   nearest_neighbor() %>% 
++   set_engine("kknn") %>% 
++   set_mode("classification")
+> 
+> fit1 <- fit_resamples(knn1_mod, rec, cv_splits)
+> 
+> saveRDS(fit1, "lab4_fit1.Rds")
+> 
+> proc.time()
+   user  system elapsed 
+  5.387   0.842  26.395 
+  
+```{r}
+fit1 %>% 
+  show_best(metric = "roc_auc", n = 10)
+```
+
+
+
+
+R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-redhat-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> source("lab4_common.R")
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
+✔ ggplot2 3.3.2     ✔ purrr   0.3.4
+✔ tibble  3.0.4     ✔ dplyr   1.0.2
+✔ tidyr   1.1.2     ✔ stringr 1.4.0
+✔ readr   1.4.0     ✔ forcats 0.5.0
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+── Attaching packages ────────────────────────────────────── tidymodels 0.1.1 ──
+✔ broom     0.7.2      ✔ recipes   0.1.14
+✔ dials     0.0.9      ✔ rsample   0.0.8 
+✔ infer     0.5.3      ✔ tune      0.1.1 
+✔ modeldata 0.1.0      ✔ workflows 0.2.1 
+✔ parsnip   0.1.4      ✔ yardstick 0.0.7 
+── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+✖ scales::discard() masks purrr::discard()
+✖ dplyr::filter()   masks stats::filter()
+✖ recipes::fixed()  masks stringr::fixed()
+✖ dplyr::lag()      masks stats::lag()
+✖ yardstick::spec() masks readr::spec()
+✖ recipes::step()   masks stats::step()
+Loading required package: foreach
+
+Attaching package: ‘foreach’
+
+The following objects are masked from ‘package:purrr’:
+
+    accumulate, when
+
+Loading required package: iterators
+Loading required package: parallel
+
+── Column specification ────────────────────────────────────────────────────────
+cols(
+  .default = col_character(),
+  id = col_double(),
+  attnd_dist_inst_id = col_double(),
+  attnd_schl_inst_id = col_double(),
+  enrl_grd = col_double(),
+  calc_admn_cd = col_logical(),
+  partic_dist_inst_id = col_double(),
+  partic_schl_inst_id = col_double(),
+  score = col_double(),
+  classification = col_double(),
+  ncessch = col_double(),
+  lat = col_double(),
+  lon = col_double()
+)
+ℹ Use `spec()` for the full column specifications.
+
+> 
+> # set model
+> knn2_mod <- 
++   nearest_neighbor() %>% 
++   set_engine("kknn") %>% 
++   set_mode("classification") %>% 
++   set_args(neighbors = tune(),
++            weight_func = tune(),
++            dist_power = tune())
+> 
+> # make a non-regular grid
+> 
+> knn_params <- parameters(neighbors(range = c(1, 20)),
++                          weight_func(),
++                          dist_power())
+> 
+> knn_sfd <- grid_max_entropy(knn_params, size = 25)
+> 
+> knn_sfd %>%
++   ggplot(aes(neighbors, dist_power))+
++   geom_point(aes(color = weight_func))
+> 
+> 
+> 
+> fit2 <- tune::tune_grid(
++   knn2_mod, 
++   rec, 
++   cv_splits,
++   grid = knn_sfd,
++   control = tune::control_resamples(save_pred = TRUE))
+> 
+> saveRDS(fit2, "lab4_fit2.Rds")
+> 
+> proc.time()
+   user  system elapsed 
+  6.358   0.968  44.180 
+
+```{r}
+fit2 %>% 
+  show_best(metric = "roc_auc", n = 5)
+```
+
+# find the best metric, mod, recipe
+
+```{r}
+best <- fit2 %>% 
+  select_best(metric = "roc_auc")
+```
+
+```{r}
+
+mod_final <- knn2_mod %>% 
+  finalize_model(best)
+
+```
+
+```{r}
+rec_final <- rec %>% 
+  finalize_recipe(best)
+```
+
+# last fit
+
+```{r}
+cl <- makeCluster(8)
+registerDoParallel(cl)
+final_res <- last_fit(mod_final, 
+                      preprocessor = rec_final, 
+                      split = cv_splits)
+stopCluster(cl)
+```
+
+```{r}
+final_res %>% 
+  collect_metrics()
+```
+
