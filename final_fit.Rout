@@ -1,0 +1,126 @@
+
+R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-redhat-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> source("lab4_common.R")
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
+✔ ggplot2 3.3.2     ✔ purrr   0.3.4
+✔ tibble  3.0.4     ✔ dplyr   1.0.2
+✔ tidyr   1.1.2     ✔ stringr 1.4.0
+✔ readr   1.4.0     ✔ forcats 0.5.0
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+── Attaching packages ────────────────────────────────────── tidymodels 0.1.1 ──
+✔ broom     0.7.2      ✔ recipes   0.1.14
+✔ dials     0.0.9      ✔ rsample   0.0.8 
+✔ infer     0.5.3      ✔ tune      0.1.1 
+✔ modeldata 0.1.0      ✔ workflows 0.2.1 
+✔ parsnip   0.1.4      ✔ yardstick 0.0.7 
+── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+✖ scales::discard() masks purrr::discard()
+✖ dplyr::filter()   masks stats::filter()
+✖ recipes::fixed()  masks stringr::fixed()
+✖ dplyr::lag()      masks stats::lag()
+✖ yardstick::spec() masks readr::spec()
+✖ recipes::step()   masks stats::step()
+Loading required package: foreach
+
+Attaching package: ‘foreach’
+
+The following objects are masked from ‘package:purrr’:
+
+    accumulate, when
+
+Loading required package: iterators
+Loading required package: parallel
+
+── Column specification ────────────────────────────────────────────────────────
+cols(
+  .default = col_character(),
+  id = col_double(),
+  attnd_dist_inst_id = col_double(),
+  attnd_schl_inst_id = col_double(),
+  enrl_grd = col_double(),
+  calc_admn_cd = col_logical(),
+  partic_dist_inst_id = col_double(),
+  partic_schl_inst_id = col_double(),
+  score = col_double(),
+  classification = col_double(),
+  ncessch = col_double(),
+  lat = col_double(),
+  lon = col_double()
+)
+ℹ Use `spec()` for the full column specifications.
+
+> 
+> 
+> knn2_mod <- 
++   nearest_neighbor() %>% 
++   set_engine("kknn") %>% 
++   set_mode("classification") %>% 
++   set_args(neighbors = tune(),
++            weight_func = tune(),
++            dist_power = tune())
+> 
+> knn_params <- parameters(neighbors(range = c(1, 20)),
++                          weight_func(),
++                          dist_power())
+> 
+> knn_sfd <- grid_max_entropy(knn_params, size = 25)
+> 
+> fit2 <- tune::tune_grid(
++   knn2_mod, 
++   rec, 
++   cv_splits,
++   grid = knn_sfd,
++   control = tune::control_resamples(save_pred = TRUE))
+> 
+> fit2 %>% 
++   show_best(metric = "roc_auc", n = 5)
+# A tibble: 5 x 9
+  neighbors weight_func dist_power .metric .estimator  mean     n std_err
+      <int> <chr>            <dbl> <chr>   <chr>      <dbl> <int>   <dbl>
+1        17 gaussian          1.05 roc_auc hand_till  0.533    10 0.00693
+2        18 rectangular       1.71 roc_auc hand_till  0.533    10 0.00617
+3        18 rectangular       1.27 roc_auc hand_till  0.532    10 0.00674
+4        10 rectangular       1.72 roc_auc hand_till  0.529    10 0.00735
+5        17 gaussian          1.33 roc_auc hand_till  0.528    10 0.00726
+# … with 1 more variable: .config <fct>
+> 
+> best <- fit2 %>% 
++   select_best(metric = "roc_auc")
+> 
+> mod_final <- knn2_mod %>% 
++   finalize_model(best)
+> 
+> rec_final <- rec %>% 
++   finalize_recipe(best)
+> 
+> cl <- makeCluster(8)
+> registerDoParallel(cl)
+> final_res <- last_fit(mod_final, 
++                       preprocessor = rec_final, 
++                       split = cv_splits)
+Error in if (!is.numeric(prop) | prop >= 1 | prop <= 0) stop("`prop` must be a number on (0, 1).",  : 
+  argument is of length zero
+Calls: last_fit ... check_rset -> split_to_rset -> <Anonymous> -> mc_splits
+In addition: Warning messages:
+1: Unknown or uninitialised column: `in_id`. 
+2: Unknown or uninitialised column: `data`. 
+Execution halted
